@@ -171,16 +171,20 @@ void dir2car(const char *filebank, const char *filecar, const char *path)
 	{
 		printf("Set \"%s\" as first & last bank\n",filebank);
 		prepareBANK(cardata,sizeof(cardata),bankdata,sizeof(bankdata));
-	};
-	if (assignFiles(cardata,512*1024,path))
-	{
-		i=saveCar(filecar,cardata,sizeof(cardata));
-		if (i>0) {printf("Save \"%s\" - %i bytes\n",filecar,i);}
-		else {printf("Can't save \"%s\"\n",filecar);};
+		if (assignFiles(cardata,512*1024,path))
+		{
+			i=saveCar(filecar,cardata,sizeof(cardata));
+			if (i>0) {printf("Save \"%s\" - %i bytes\n",filecar,i);}
+			else {printf("Can't save \"%s\"\n",filecar);};
+		}
+		else
+		{
+			printf("\"%s\" doesn't exist\n",path); 
+		};
 	}
 	else
 	{
-		printf("\"%s\" doesn't exist\n",path); 
+		printf("Can't find \"%s\"\n",filebank);
 	};
 }
 /*--------------------------------------------------------------------*/
