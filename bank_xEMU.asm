@@ -410,7 +410,7 @@ FILE_OFFSET
 		adc PBANK
 		and #$3F
 		sta PBANK
-		rts
+		jmp COPY_SECTOR
 ;--------------------------------
 FILEINFO
 ;--------
