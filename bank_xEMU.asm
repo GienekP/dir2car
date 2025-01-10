@@ -179,6 +179,7 @@ BUSYVB	rts
 ;--------------------------------
 BITC	lda FSTATUS
 		eor #$01
+		lsr
 		rts
 ;--------------------------------
 ; Turn On/Off bank need it, if OS work
