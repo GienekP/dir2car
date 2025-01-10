@@ -179,7 +179,6 @@ BUSYVB	rts
 ;--------------------------------
 BITC	lda FSTATUS
 		eor #$01
-		lsr
 		rts
 ;--------------------------------
 ; Turn On/Off bank need it, if OS work
@@ -343,6 +342,7 @@ LDEOF	pla
 GET_BYTE
 		lda FSTATUS
 		bne @+
+		sec
 		rts
 @		lda PPOS
 		bne @+
@@ -352,7 +352,8 @@ GET_BYTE
 		pha
 		jsr INC_PPOS
 		pla
-		jmp BITC
+		clc
+		rts
 ;--------------------------------
 COPY_SECTOR
 		lda TMP
