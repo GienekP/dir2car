@@ -32,6 +32,61 @@ RESETCD = $E477
 EDOPN   = $EF94
 EOUTCH  = $F2B0
 ;-----------------------------------------------------------------------
+; xBIOS table of JMP
+;xBIOS					 = $0800
+;xBIOS_VERSION			 = xBIOS+$02
+;xBIOS_RENAME_ENTRY		 = xBIOS+$03
+;xBIOS_LOAD_FILE          = xBIOS+$06
+;xBIOS_OPEN_FILE          = xBIOS+$09
+;xBIOS_LOAD_DATA          = xBIOS+$0c
+;xBIOS_WRITE_DATA         = xBIOS+$0f
+;xBIOS_OPEN_CURRENT_DIR   = xBIOS+$12
+;xBIOS_GET_BYTE           = xBIOS+$15
+;xBIOS_PUT_BYTE           = xBIOS+$18
+;xBIOS_FLUSH_BUFFER       = xBIOS+$1b
+;xBIOS_SET_LENGTH         = xBIOS+$1e
+;xBIOS_SET_INIAD          = xBIOS+$21
+;xBIOS_SET_FILE_OFFSET    = xBIOS+$24
+;xBIOS_SET_RUNAD          = xBIOS+$27
+;xBIOS_SET_DEFAULT_DEVICE = xBIOS+$2a
+;xBIOS_OPEN_DIR           = xBIOS+$2d
+;xBIOS_LOAD_BINARY_FILE   = xBIOS+$30
+;xBIOS_OPEN_DEFAULT_DIR   = xBIOS+$33
+;xBIOS_SET_DEVICE         = xBIOS+$36
+;xBIOS_RELOCATE_BUFFER    = xBIOS+$39
+;xBIOS_GET_ENTRY          = xBIOS+$3c
+;xBIOS_OPEN_DEFAULT_FILE  = xBIOS+$3f
+;xBIOS_READ_SECTOR        = xBIOS+$42
+;xBIOS_FIND_ENTRY         = xBIOS+$45
+;xBIOS_SET_BUFFER_SIZE    = xBIOS+$48
+;----------------
+; EXTTRA PART
+;xBIOS_JMPFUTURE1         = xBIOS+$4B
+;xBIOS_JMPFUTURE2         = xBIOS+$4E
+;xBIOS_JMPFUTURE3         = xBIOS+$51
+;----------------
+;xBIOS_RESET              = xBIOS+$54	; EXTRA RESET
+;xBIOS_LOAD_AUTORUN       = xBIOS+$57	; EXTRA LOAD AUTORUN.COM
+;-----------------------------------------------------------------------
+; this part is not use, only info (for future)
+;xDIRSIZE        equ xBIOS+$3e5 ; current directory size in sectors (1 byte)
+;xSPEED          equ xBIOS+$3e6 ; STANDARD SPEED (1 byte)
+;xHSPEED         equ xBIOS+$3e7 ; ULTRA SPEED (1 byte)
+;xIRQEN          equ xBIOS+$3e8 ; User IRQ (1 byte)
+;xAUDCTL         equ xBIOS+$3e9 ; AUDCTL
+;xFILE           equ xBIOS+$3ea ; File handle (2 bytes)
+;xDIR            equ xBIOS+$3ec ; Root directory handle (2 bytes)
+;xIOV            equ xBIOS+$3ee ; I/O module entry (2 bytes)
+;xBUFFERH        equ xBIOS+$3f0 ; Buffer adr hi byte (1 byte)
+;xBUFSIZE        equ xBIOS+$3f1 ; Buffer size lo byte $100-SIZE (1 byte)
+;xDAUX3          equ xBIOS+$3f2 ; Buffer offset (1 byte)
+;xSEGMENT        equ xBIOS+$3f3 ; Bytes to go in binary file segment (2 bytes)
+;xNOTE           equ xBIOS+$3f5 ; File pointer (3 bytes)
+;xDEVICE         equ xBIOS+$3fc ; Device ID
+;xDCMD           equ xBIOS+$3fd ; CMD (1 byte)
+;xDAUX1          equ xBIOS+$3fe ; Sector lo byte (1 byte)
+;xDAUX2          equ xBIOS+$3ff ; Sector hi byte (1 byte)
+;-----------------------------------------------------------------------
 ; CARTRIDGE BANK FIRST & LAST
 
 		OPT h-f+
@@ -121,6 +176,11 @@ WAITVB	lda #$77
 		rts
 ;--------------------------------
 BUSYVB	rts
+;--------------------------------
+BITC	lda FSTATUS
+		eor #$01
+		lsr
+		rts
 ;--------------------------------
 ; Turn On/Off bank need it, if OS work
 CTRIGTG	lda TRIG3
@@ -240,7 +300,7 @@ OPEN_FILE
 		sta PSECTOR
 		lda FBANK
 		sta PBANK
-		rts
+		jmp BITC
 ;--------------------------------
 LOAD_DATA
 		
@@ -278,7 +338,7 @@ LDEOF	pla
 		sta TMP+1
 		pla
 		sta TMP
-		rts
+		jmp BITC
 ;--------------------------------
 GET_BYTE
 		lda FSTATUS
@@ -292,7 +352,7 @@ GET_BYTE
 		pha
 		jsr INC_PPOS
 		pla
-		rts
+		jmp BITC
 ;--------------------------------
 COPY_SECTOR
 		lda TMP
@@ -321,7 +381,7 @@ COPY_SECTOR
 		sta TMP+1
 		pla
 		sta TMP
-		rts
+		jmp BITC
 ;--------------------------------
 INC_PPOS
 		inc PPOS
@@ -347,7 +407,7 @@ INCRET	lda PPOS
 		bne @+
 		lda #$00
 		sta FSTATUS
-@		rts
+@		jmp BITC
 ;--------------------------------
 SET_INIAD
 		sty INITAD
