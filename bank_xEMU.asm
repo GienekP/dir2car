@@ -210,7 +210,6 @@ XEXBLK	jsr GET_BYTE
 		lda #<(XEXNEXT-1)
 		pha
 		
-		clc
 		jmp (INITAD)
 LFEXIT	jmp (RUNAD)
 ;--------------------------------
@@ -291,7 +290,8 @@ LDEOF	pla
 		sta TMP+1
 		pla
 		sta TMP
-		jmp BITC
+		clc
+		rts
 ;--------------------------------
 GET_BYTE
 		lda FSTATUS
